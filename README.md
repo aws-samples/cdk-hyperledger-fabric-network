@@ -11,7 +11,6 @@ out a member and its nodes, but the following enhanced functionality
 is planned for future releases:
 
 *  Add support for Java and .NET
-*  Enroll users, storing their credentials in Secrets Manager
 *  Create channels on nodes
 *  Instantiate chaincode on nodes
 
@@ -84,6 +83,10 @@ new HyperledgerFabricNetwork(this, 'Example', {
       availabilityZone: 'us-east-1b',
       instanceType: hyperledger.InstanceType.STANDARD5_LARGE,
     },
+  ],
+  users: [
+    { userId: 'AppUser1', affilitation: 'MyMember' },
+    { userId: 'AppUser2', affilitation: 'MyMember.department1' },
   ],
 });
 ```

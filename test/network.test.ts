@@ -69,6 +69,7 @@ describe('HyperledgerFabricNetwork', () => {
     expect(network.adminPrivateKeySecret).toBeInstanceOf(secretsmanager.Secret);
     expect(network.adminSignedCertSecret).toBeInstanceOf(secretsmanager.Secret);
     expect(network.enableCaLogging).toBe(true);
+    expect(network.users.length).toBe(0);
   });
 
   test('Create a network with custom descriptions', () => {
@@ -338,6 +339,35 @@ describe('HyperledgerFabricNetwork', () => {
     expect(thresholdTooSmall).toThrow(Error);
     expect(thresholdTooLarge).toThrow(Error);
     expect(thresholdNotInteger).toThrow(Error);
+  });
+
+  test('Fail to create a network with invalid user affiliation', () => {
+    const invalidAffiliation = () => {
+      const app = new cdk.App();
+      const stack = new cdk.Stack(app, 'TestStack', DEFAULT_ENV);
+      new hyperledger.HyperledgerFabricNetwork(stack, 'TestHyperledgerFabricNetwork', {
+        networkName: 'TestNetwork',
+        memberName: 'TestMember',
+        users: [
+          { userId: 'TestUser', affilitation: 'department1' },
+        ],
+      });
+    };
+    expect(invalidAffiliation).toThrow(Error);
+  });
+
+  test('Create network with user properties', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack', DEFAULT_ENV);
+    const network = new hyperledger.HyperledgerFabricNetwork(stack, 'TestHyperledgerFabricNetwork', {
+      networkName: 'TestNetwork',
+      memberName: 'TestMember',
+      users: [
+        { userId: 'TestUser', affilitation: 'TestMember.department1' },
+      ],
+    });
+
+    expect(network.users.length).toBe(1);
   });
 
   test('Create network with CA Logging disabled', () => {
